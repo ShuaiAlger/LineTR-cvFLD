@@ -8,6 +8,8 @@ class dotdict(dict):
     __setattr__ = dict.__setitem__
     __delattr__ = dict.__delitem__
 
+import cv2
+
 class LSD():
     default_config = {
         'n_octave': 2,
@@ -16,16 +18,40 @@ class LSD():
 
     def __init__(self, config):
         self.config = {**self.default_config, **config}
-        self.lsd = cv2.line_descriptor.LSDDetector_createLSDDetector()
+        #self.lsd = cv2.line_descriptor.LSDDetector_createLSDDetector()
+        self.fld = cv2.ximgproc.createFastLineDetector() 
 
     def detect(self, image):
-        klines_cv2 = self.lsd.detect(image, self.config['scale'], self.config['n_octave'])
+        #klines_cv2 = self.lsd.detect(image, self.config['scale'], self.config['n_octave'])
+        klines_cv2 = self.fld.detect(image)
         return klines_cv2
 
     def detect_torch(self, image):
         image = (image*255).cpu().numpy().squeeze().astype('uint8')
-        klines_cv2 = self.lsd.detect(image, self.config['scale'], self.config['n_octave'])
+        #klines_cv2 = self.lsd.detect(image, self.config['scale'], self.config['n_octave'])
+        klines_cv2 = self.fld.detect(image)
         return klines_cv2
+
+
+
+# class LSD():
+#     default_config = {
+#         'n_octave': 2,
+#         'scale': 2,
+#     }
+
+#     def __init__(self, config):
+#         self.config = {**self.default_config, **config}
+#         self.lsd = cv2.line_descriptor.LSDDetector_createLSDDetector()
+
+#     def detect(self, image):
+#         klines_cv2 = self.lsd.detect(image, self.config['scale'], self.config['n_octave'])
+#         return klines_cv2
+
+#     def detect_torch(self, image):
+#         image = (image*255).cpu().numpy().squeeze().astype('uint8')
+#         klines_cv2 = self.lsd.detect(image, self.config['scale'], self.config['n_octave'])
+#         return klines_cv2
 
 # class ELSED():
 #     default_config = {
